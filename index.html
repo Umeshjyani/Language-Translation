@@ -17,7 +17,7 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             background-color: #f9f9f9;
-            height: 80vh;
+            height: 100%;
         }
 
         input[type="text"] {
@@ -61,6 +61,15 @@
             display: flex;
             justify-content: center;
         }
+
+        #show {
+
+            div {
+                max-width: 600px;
+                display: flex;
+                /* justify-content: center; */
+            }
+        }
     </style>
 </head>
 
@@ -73,6 +82,7 @@
             <button onclick="translateText()">Translate</button>
         </div>
         <input type="text" id="output" class="input2" placeholder="Translated Output" readonly>
+        <div id="show"></div>
     </div>
 
     <script>
@@ -90,8 +100,10 @@
             { "LangCode": "hu", "Name": "Hungarian" },
             { "LangCode": "cs", "Name": "Czech" }
         ];
+        const showDiv = document.getElementById("show");
 
         function translateText() {
+            showDiv.innerHTML = "";
             const textToTranslate = document.getElementById("textToTranslate").value;
             const translationKey = document.getElementById("translationKey").value;
             const outputInput = document.getElementById("output");
@@ -102,7 +114,14 @@
                 return fetch(translationUrl)
                     .then(response => response.json())
                     .then(data => {
+                        debugger
                         const translatedText = data[0][0][0];
+                        const translationPart = `{ LangCode: ${lang.LangCode}(${lang.Name}), Text: "${translatedText}" }`;
+
+                        const translationDiv = document.createElement("div");
+                        translationDiv.textContent = translationPart;
+                        showDiv.appendChild(translationDiv);
+
                         return `{ "LangCode": "${lang.LangCode}", "Text": "${translatedText}" }`;
                     })
                     .catch(error => {
@@ -111,6 +130,8 @@
             });
 
             Promise.all(outputFormat).then(formattedTranslations => {
+                const preElement = document.createElement("pre");
+                preElement.textContent = `{  "Text": "${formattedTranslations}" }`;
                 const combinedOutput = formattedTranslations.join(", ");
                 const finalOutput = `{ "Text": "${textToTranslate}", "convertText": [ ${combinedOutput}],"Key": "${translationKey}" }`;
                 outputInput.value = finalOutput;
