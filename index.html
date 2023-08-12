@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Translation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            height: 80vh;
+        }
+
+        input[type="text"] {
+            width: 97%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: #fff;
+            overflow: auto;
+            max-height: 200px;
+        }
+
+        .input2 {
+            height: 50px;
+            font-size: 18px;
+        }
+
+        .btn {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Language Translation</h2>
+        <input type="text" id="textToTranslate" class="input1" placeholder="Enter text to translate" required>
+        <input type="text" id="translationKey" class="input1" placeholder="Enter translation key" required>
+        <div class="btn">
+            <button onclick="translateText()">Translate</button>
+        </div>
+        <input type="text" id="output" class="input2" placeholder="Translated Output" readonly>
+    </div>
+
+    <script>
+        const translations = [
+            { "LangCode": "es", "Name": "Spanish" },
+            { "LangCode": "pt", "Name": "Portuguese" },
+            { "LangCode": "ru", "Name": "Russian" },
+            { "LangCode": "ja", "Name": "Japanese" },
+            { "LangCode": "fr", "Name": "French" },
+            { "LangCode": "de", "Name": "German" },
+            { "LangCode": "it", "Name": "Italian" },
+            { "LangCode": "pl", "Name": "Polish" },
+            { "LangCode": "uk", "Name": "Ukrainian" },
+            { "LangCode": "nl", "Name": "Dutch" },
+            { "LangCode": "hu", "Name": "Hungarian" },
+            { "LangCode": "cs", "Name": "Czech" }
+        ];
+
+        function translateText() {
+            const textToTranslate = document.getElementById("textToTranslate").value;
+            const translationKey = document.getElementById("translationKey").value;
+            const outputInput = document.getElementById("output");
+
+            const outputFormat = translations.map(lang => {
+                const translationUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang.LangCode}&dt=t&q=${encodeURIComponent(textToTranslate)}`;
+
+                return fetch(translationUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const translatedText = data[0][0][0];
+                        return `{ "LangCode": "${lang.LangCode}", "Text": "${translatedText}" }`;
+                    })
+                    .catch(error => {
+                        console.error("Translation error:", error);
+                    });
+            });
+
+            Promise.all(outputFormat).then(formattedTranslations => {
+                const combinedOutput = formattedTranslations.join(", ");
+                const finalOutput = `{ "Text": "${textToTranslate}", "convertText": [ ${combinedOutput}],"Key": "${translationKey}" }`;
+                outputInput.value = finalOutput;
+            });
+        }
+    </script>
+</body>
+
+</html>
