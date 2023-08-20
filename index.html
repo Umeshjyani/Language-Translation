@@ -8,29 +8,30 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-size: 18px;
         }
 
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             background-color: #f9f9f9;
-            height: 100%;
+            height: 500px;
         }
 
         input[type="text"] {
             width: 97%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
             border: 1px solid #ccc;
             border-radius: 3px;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 15px 25px;
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -62,27 +63,52 @@
             justify-content: center;
         }
 
-        #show {
+        .name {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-weight: bold;
+        }
 
-            div {
-                max-width: 600px;
-                display: flex;
-                /* justify-content: center; */
-            }
+        .showoutput {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .copyButton {
+            height: 100%;
+            margin-top: 15px;
+            padding: 27px;
+        }
+
+        .alert {
+            color: red;
+            text-align: center;
+            padding-top: 20px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <div class="name">
+            <a href="https://umeshjyani.bio.link/">UMESH JYANI</a>
+        </div>
         <h2 style="text-align: center;">Language Translation</h2>
         <input type="text" id="textToTranslate" class="input1" placeholder="Enter text to translate" required>
         <input type="text" id="translationKey" class="input1" placeholder="Enter translation key" required>
         <div class="btn">
             <button onclick="translateText()">Translate</button>
         </div>
-        <input type="text" id="output" class="input2" placeholder="Translated Output" readonly>
-        <div id="show"></div>
+        <div class="showoutput">
+            <input type="text" id="output" class="input2" placeholder="Translated Output" readonly>
+            <button id="copyButton" class="copyButton">Copy</button>
+        </div>
+        <div class="alert">
+            please check your requirement this translation is translate on twelve language.
+        </div>
     </div>
 
     <script>
@@ -100,14 +126,32 @@
             { "LangCode": "hu", "Name": "Hungarian" },
             { "LangCode": "cs", "Name": "Czech" }
         ];
-        const showDiv = document.getElementById("show");
+        const output = document.getElementById('output');
+        const copyButton = document.getElementById('copyButton');
+
+        copyButton.addEventListener('click', function () {
+            if (output.value) {
+                output.select();
+                document.execCommand('copy');
+                copyButton.textContent = '✅';
+                copyButton.style.fontSize = '30px';
+                copyButton.style.padding = '15px';
+                setTimeout(function () {
+                    copyButton.textContent = 'Copy';
+                    copyButton.style.fontSize = '';
+                    copyButton.style.padding = '';
+                }, 5000);
+            }
+        })
 
         function translateText() {
-            showDiv.innerHTML = "";
             const textToTranslate = document.getElementById("textToTranslate").value;
             const translationKey = document.getElementById("translationKey").value;
             const outputInput = document.getElementById("output");
-
+            if (textToTranslate == "" || translationKey == "") {
+                alert("please enter text and key");
+                return;
+            }
             const outputFormat = translations.map(lang => {
                 const translationUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang.LangCode}&dt=t&q=${encodeURIComponent(textToTranslate)}`;
 
@@ -116,12 +160,6 @@
                     .then(data => {
                         debugger
                         const translatedText = data[0][0][0];
-                        const translationPart = `{ LangCode: ${lang.LangCode}(${lang.Name}), Text: "${translatedText}" }`;
-
-                        const translationDiv = document.createElement("div");
-                        translationDiv.textContent = translationPart;
-                        showDiv.appendChild(translationDiv);
-
                         return `{ "LangCode": "${lang.LangCode}", "Text": "${translatedText}" }`;
                     })
                     .catch(error => {
