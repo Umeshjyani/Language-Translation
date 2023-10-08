@@ -18,12 +18,12 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             background-color: #f9f9f9;
-            height: 450px;
+            height: 490px;
         }
 
         input[type="text"] {
             width: 97%;
-            padding: 14px;
+            padding: 12px;
             margin-bottom: 12px;
             border: 1px solid #ccc;
             border-radius: 3px;
@@ -31,7 +31,7 @@
         }
 
         button {
-            padding: 15px 25px;
+            padding: 12px 30px;
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -44,8 +44,7 @@
         }
 
         #output {
-            margin-top: 15px;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 3px;
             background-color: #fff;
@@ -54,7 +53,6 @@
         }
 
         .input2 {
-            height: 50px;
             font-size: 18px;
         }
 
@@ -62,6 +60,7 @@
             display: flex;
             justify-content: center;
             gap: 20px;
+            margin-bottom: 15px;
         }
 
         .name {
@@ -80,8 +79,7 @@
 
         .copyButton {
             height: 100%;
-            margin-top: 15px;
-            padding: 27px;
+            padding: 14px 30px;
         }
 
         .alert {
@@ -108,6 +106,14 @@
             <input type="text" id="output" class="input2" placeholder="Translated Output" readonly>
             <button id="copyButton" class="copyButton">Copy</button>
         </div>
+        <div class="showoutput">
+            <input type="text" id="output1" class="input2" placeholder="Translated Output" readonly>
+            <button id="copyButton1" class="copyButton">Copy</button>
+        </div>
+        <div class="showoutput">
+            <input type="text" id="output2" class="input2" placeholder="Translated Output" readonly>
+            <button id="copyButton2" class="copyButton">Copy</button>
+        </div>
         <div class="alert">
             please check your requirement this translation is translate on twelve language.
         </div>
@@ -129,22 +135,50 @@
             { "LangCode": "cs", "Name": "Czech" }
         ];
         const output = document.getElementById('output');
+        const output1 = document.getElementById('output1');
+        const output2 = document.getElementById('output2');
         const copyButton = document.getElementById('copyButton');
+        const copyButton1 = document.getElementById('copyButton1');
+        const copyButton2 = document.getElementById('copyButton2');
 
-        copyButton.addEventListener('click', function () {
-            if (output.value) {
-                output.select();
-                document.execCommand('copy');
-                copyButton.textContent = '✅';
-                copyButton.style.fontSize = '30px';
-                copyButton.style.padding = '15px';
-                setTimeout(function () {
-                    copyButton.textContent = 'Copy';
-                    copyButton.style.fontSize = '';
-                    copyButton.style.padding = '';
-                }, 5000);
-            }
-        })
+        // copyButton.addEventListener('click', function () {
+        //     if (output.value) {
+        //         output.select();
+        //         document.execCommand('copy');
+        //         copyButton.textContent = '✅';
+        //         copyButton.style.fontSize = '20px';
+        //         copyButton.style.padding = '8px 32px';
+        //         setTimeout(function () {
+        //             copyButton.textContent = 'Copy';
+        //             copyButton.style.fontSize = '';
+        //             copyButton.style.padding = '';
+        //         }, 5000000);
+        //     }
+        // })
+        function addCopyEventListener(button, output0) {
+            button.addEventListener('click', function () {
+                if (output0.value) {
+                    output0.select();
+                    document.execCommand('copy');
+                    button.textContent = '✅';
+                    button.style.fontSize = '20px';
+                    button.style.padding = '8px 32px';
+                    setTimeout(function () {
+                        button.textContent = 'Copy';
+                        button.style.fontSize = '';
+                        button.style.padding = '';
+                    }, 5000);
+                }
+            });
+        }
+
+        const buttons = [copyButton, copyButton1, copyButton2];
+        const outputs = [output, output1, output2];
+
+        buttons.forEach((button, index) => {
+            addCopyEventListener(button, outputs[index]);
+        });
+
 
         function translateText() {
             const textToTranslate = document.getElementById("textToTranslate").value;
@@ -173,9 +207,13 @@
                 const preElement = document.createElement("pre");
                 preElement.textContent = `{  "Text": "${formattedTranslations}" }`;
                 const combinedOutput = formattedTranslations.join(", ");
-                const finalOutput = `{ "Text": "${textToTranslate}", "convertText": [ ${combinedOutput}],"Key": "${translationKey}" }`;
+                const finalOutput = `{ "Text": "${textToTranslate}", "convertText": [ ${combinedOutput}],"Key": "${translationKey}" },`;
                 outputInput.value = finalOutput;
+                output1.value = `"${translationKey}":"${textToTranslate}",`;
+                output2.value = `{Language.${translationKey} ? Language.${translationKey} : "${textToTranslate}"}`;
             });
+
+
         }
         const clear = document.getElementById("clear");
         clear.addEventListener('click', function () {
@@ -183,6 +221,9 @@
             document.getElementById('output').value = "";
             document.getElementById("textToTranslate").value = '';
             document.getElementById("translationKey").value = '';
+
+            document.getElementById('output1').value = "";
+            document.getElementById('output2').value = "";
         })
     </script>
 </body>
