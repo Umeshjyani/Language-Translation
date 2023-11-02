@@ -183,7 +183,7 @@
 
         function translateText() {
             const textToTranslate = document.getElementById("textToTranslate").value;
-            const translationKey = document.getElementById("translationKey").value;
+            let translationKey = document.getElementById("translationKey").value;
             const outputInput = document.getElementById("output");
             if (textToTranslate == "" || translationKey == "") {
                 alert("please enter text and key");
