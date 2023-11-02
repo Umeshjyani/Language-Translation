@@ -203,9 +203,10 @@
                         console.error("Translation error:", error);
                     });
             });
-            translationKey.addEventListener("change", function (){
-    const inputValue = translationKey.value.replace(/\s/g, '');
-    translationKey.value = inputValue;
+          const translationKeyInput = document.getElementById("translationKey");
+translationKeyInput.addEventListener("change", function () {
+    const inputValue = translationKeyInput.value.replace(/\s/g, '');
+    translationKeyInput.value = inputValue;
 });
 
             Promise.all(outputFormat).then(formattedTranslations => {
