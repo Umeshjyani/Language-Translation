@@ -213,8 +213,8 @@
                 const combinedOutput = formattedTranslations.join(", ");
                 const finalOutput = `{ "Text": "${textToTranslate}", "convertText": [ ${combinedOutput}],"Key": "${translationKey}" },`;
                 outputInput.value = finalOutput;
-                output1.value = `"${translationKey}":"${textToTranslate}",`;
-                // output2.value = `{Language.${translationKey} ? Language.${translationKey} : "${textToTranslate}"}`;
+                // output1.value = `"${translationKey}":"${textToTranslate}",`;
+                output2.value = `{Language.${translationKey} ? Language.${translationKey} : "${textToTranslate}"}`;
                 output2.value = `{combinedOutput}`;
                 console.log(combinedOutput)
             });
